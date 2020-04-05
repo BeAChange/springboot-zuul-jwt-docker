@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+       
+  api-auth:
+    build: ../api-auth
+    container_name: api-auth
+    hostname: api-auth
+    restart: always
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./api-auth/config:/tmp/config
+      - ./api-auth/logs:/tmp/logs
+    networks:
+      - app_net
+    
+  api-demo:
+    build: ../api-demo
+    container_name: api-demo
+    hostname: api-demo
+    restart: always
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./api-demo/config:/tmp/config
+      - ./api-demo/logs:/tmp/logs
+    networks:
+      - app_net
+
+      
+  api-gateway:
+    build: ../api-gateway
+    container_name: api-gateway
+    hostname: api-gateway
+    restart: always
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./api-gateway/config:/tmp/config
+      - ./api-gateway/logs:/tmp/logs
+    depends_on:
+      - api-demo
+      - api-auth
+    networks:
+      - app_net
+      
+networks:
+  app_net:
+    driver: bridge
